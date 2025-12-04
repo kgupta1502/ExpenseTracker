@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Expense Logger - Module 1</title>
+    <meta charset="UTF-8">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f4f6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .container {
+            width: 450px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            margin-top: 12px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1e4ec9;
+        }
+
+        .expense-item {
+            background: #e5e7eb;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .delete-btn {
+            float: right;
+            color: red;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .edit-btn {
+            float: right;
+            margin-right: 15px;
+            color: green;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .alert {
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .success { background: #d1fae5; color: #065f46; }
+        .error { background: #fee2e2; color: #991b1b; }
+    </style>
+</head>
+
+<body>
+
+    <h1>Expense Logger</h1>
+
+    <div class="container">
+        <h3>Add Expense</h3>
+
+        <div id="alertBox"></div>
+
+        <input type="number" id="amount" placeholder="Amount">
+
+        <select id="category">
+            <option value="">Select Category</option>
+            <option>Food</option>
+            <option>Transport</option>
+            <option>Shopping</option>
+            <option>Bills</option>
+            <option>Other</option>
+        </select>
+
+        <input type="date" id="date">
+
+        <textarea id="description" placeholder="Description (optional)"></textarea>
+
+        <button onclick="addExpense()">Add Expense</button>
+
+        <h3 style="margin-top:20px;">Recent Expenses</h3>
+        <div id="expenseList"></div>
+    </div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
