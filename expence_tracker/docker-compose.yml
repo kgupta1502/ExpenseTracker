@@ -1,0 +1,50 @@
+version: '3.9'
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      DATABASE_URL: mysql+pymysql://expense_app:expense_password@mysql:3306/expense_tracker
+      SECRET_KEY: change-me-in-prod
+      FLASK_ENV: production
+      FLASK_RUN_HOST: 0.0.0.0
+    ports:
+      - "5000:5000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      backend:
+        condition: service_started
+    restart: unless-stopped
+
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: expense_tracker
+      MYSQL_USER: expense_app
+      MYSQL_PASSWORD: expense_password
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot_password"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./backend/mysql_schema.sql:/docker-entrypoint-initdb.d/mysql_schema.sql:ro
+
+volumes:
+  mysql_data:

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ExpenseTracker</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div id="login-overlay" class="login-overlay">
+      <div class="login-panel">
+        <button type="button" id="close-login" class="close-login" aria-label="Close">&times;</button>
+        <div class="login-header">
+          <div>
+            <p class="eyebrow">ExpenseTracker Access</p>
+            <h1 id="login-title">Welcome back</h1>
+            <p class="subtitle" id="login-subtitle">
+              Sign in with your project credentials to open your dashboard.
+            </p>
+          </div>
+          <div class="login-toggle">
+            <button type="button" class="pill active" data-mode="login">Log in</button>
+            <button type="button" class="pill" data-mode="signup">Sign up</button>
+          </div>
+        </div>
+        <form id="login-form" class="login-form">
+          <label>
+            <span>Email</span>
+            <input type="email" name="email" placeholder="you@example.com" required />
+          </label>
+          <label>
+            <span>Username</span>
+            <input type="text" name="username" placeholder="Name" required />
+          </label>
+          <label>
+            <span>Password</span>
+            <input type="password" name="password" placeholder="••••••••" required />
+          </label>
+          <div class="captcha-row hidden" id="captcha-row">
+            <span id="captcha-question">Prove you are human</span>
+            <input type="number" id="captcha-answer" placeholder="Answer" inputmode="numeric" />
+          </div>
+          <button type="submit" class="primary full">Enter workspace</button>
+        </form>
+      </div>
+    </div>
+    <header class="hero">
+      <div>
+        <p class="eyebrow">ExpenseTracker</p>
+        <h1>Track, analyse, and forecast spending</h1>
+        <p class="subtitle">
+          Log everyday expenses, slice them by category or period, export the ledger, and peek into next month’s projection with lightweight AI.
+        </p>
+      </div>
+      <div class="hero-metrics">
+        <div class="hero-card">
+          <p class="metric-label">Entries logged</p>
+          <p id="entries-count" class="metric-value">0</p>
+        </div>
+        <div class="hero-card">
+          <p class="metric-label">This month</p>
+          <p id="hero-month-total" class="metric-value">₹0</p>
+        </div>
+        <div class="hero-card">
+          <p class="metric-label">Next month forecast</p>
+          <p id="hero-prediction" class="metric-value">₹0</p>
+        </div>
+      </div>
+      <button id="logout-btn" class="ghost logout-btn" type="button">Logout</button>
+    </header>
+
+    <main>
+      <section class="grid two">
+        <article class="card">
+          <div class="card-header">
+            <div>
+              <p class="eyebrow">EXPENCE LOGGER</p>
+              <h2>Log a new expense</h2>
+            </div>
+            <button id="cancel-edit" class="ghost" type="button" hidden>Cancel edit</button>
+          </div>
+          <form id="expense-form" class="form-grid">
+            <label>
+              <span>Amount (₹)</span>
+              <input type="number" step="0.01" min="0" name="amount" required />
+            </label>
+            <label>
+              <span>Category</span>
+              <select name="category" required>
+                <option value="">Select category</option>
+                <option>Groceries</option>
+                <option>Transport</option>
+                <option>Bills</option>
+                <option>Dining</option>
+                <option>Shopping</option>
+                <option>Health</option>
+                <option>Education</option>
+                <option>Travel</option>
+                <option>Other</option>
+              </select>
+            </label>
+            <label>
+              <span>Date</span>
+              <input type="date" name="date" required />
+            </label>
+            <label class="full">
+              <span>Description</span>
+              <input type="text" name="description" placeholder="Optional note" />
+            </label>
+            <button type="submit" class="primary full">Save expense</button>
+          </form>
+        </article>
+
+        <article class="card">
+          <div class="card-header">
+            <div>
+              <p class="eyebrow">Recent activity</p>
+              <h2>Last 10 expenses</h2>
+            </div>
+            <p class="muted" id="recent-meta">--</p>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Category</th>
+                  <th>Description</th>
+                  <th>Amount</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="recent-list"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="grid two">
+        <article class="card">
+          <div class="card-header stack">
+            <div>
+              <p class="eyebrow">EXPENCE ANALYSIS</p>
+              <h2>Category insights</h2>
+            </div>
+            <form id="filter-form" class="filter-grid">
+              <label>
+                <span>From</span>
+                <input type="date" id="filter-start" name="start_date" />
+              </label>
+              <label>
+                <span>To</span>
+                <input type="date" id="filter-end" name="end_date" />
+              </label>
+              <label>
+                <span>Category</span>
+                <select id="filter-category" name="category">
+                  <option value="">All</option>
+                  <option>Groceries</option>
+                  <option>Transport</option>
+                  <option>Bills</option>
+                  <option>Dining</option>
+                  <option>Shopping</option>
+                  <option>Health</option>
+                  <option>Education</option>
+                  <option>Travel</option>
+                  <option>Other</option>
+                </select>
+              </label>
+              <div class="filter-actions">
+                <button type="submit" class="ghost">Apply</button>
+                <button type="button" class="ghost" id="reset-filters">Reset</button>
+                <button type="button" class="ghost" id="export-csv">Export CSV</button>
+              </div>
+            </form>
+          </div>
+          <p class="muted" id="total-spent">₹0 spent</p>
+          <div class="chart-wrapper">
+            <canvas id="category-chart" height="240"></canvas>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Total</th>
+                  <th>Share</th>
+                </tr>
+              </thead>
+              <tbody id="category-table"></tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-header">
+            <div>
+              <p class="eyebrow">Monthly breakdown</p>
+              <h2>Current month</h2>
+            </div>
+            <label class="month-picker">
+              <span>Month</span>
+              <input type="month" id="month-filter" />
+            </label>
+          </div>
+          <div class="monthly-summary">
+            <p class="month-label" id="current-month">--</p>
+            <p class="month-total" id="month-total">₹0</p>
+            <p class="muted" id="month-count">0 entries</p>
+          </div>
+          <div class="monthly-list" id="monthly-list"></div>
+        </article>
+      </section>
+
+      <section class="card" id="predictor">
+        <div class="card-header">
+          <div>
+            <p class="eyebrow">EXPENCE PREDICTION</p>
+            <h2>Spending forecast</h2>
+          </div>
+          <button id="refresh-predictor" class="ghost" type="button">Refresh</button>
+        </div>
+        <div class="predictor-grid">
+          <div>
+            <p class="muted">Predicted next month</p>
+            <p class="prediction" id="predicted-amount">₹0</p>
+          </div>
+          <div>
+            <p class="muted">Profile</p>
+            <p class="profile" id="spend-profile">--</p>
+          </div>
+          <div>
+            <p class="muted">Recent 3-month avg</p>
+            <p class="profile" id="recent-average">₹0</p>
+          </div>
+        </div>
+        <p class="suggestion" id="saving-tip">Add a few months of data to unlock the forecast.</p>
+      </section>
+    </main>
+  </body>
+</html>
